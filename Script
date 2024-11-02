@@ -98,7 +98,7 @@ game:GetService('RunService').RenderStepped:Connect(function()
             if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
                 pcall(function()
                     player.Character.HumanoidRootPart.Size = ofcsize
-                    player.Character.HumanoidRootPart.Transparency = 0
+                    player.Character.HumanoidRootPart.Transparency = 1
                 end)
             end
         end
