@@ -3,7 +3,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local Window = OrionLib:MakeWindow({Name = "Projeto LKB < Beta >", HidePremium = false, SaveConfig = true, ConfigFolder = "Projeto LKB"})
 
 local Tab = Window:MakeTab({
-    Name = "Main",c
+    Name = "Main",
     Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
