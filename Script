@@ -1,0 +1,298 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Projeto LKB < Beta >", HidePremium = false, SaveConfig = true, ConfigFolder = "Projeto LKB"})
+
+local Tab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+    Name = "Script Functions"
+})
+
+Tab:AddToggle({
+    Name = "kill all (Gun) < Beta >",
+    Default = false,
+    Callback = function(v)
+        _G.killallfunction = v
+        while _G.killallfunction do
+            task.wait(_G.killallCD)
+            for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                if player.Character and player.Character.Parent == game:GetService("Workspace") and 
+                   player.Character:FindFirstChild("HumanoidRootPart") then
+                    local HRP = player.Character.HumanoidRootPart.Position
+                    local args = {
+                        [1] = Vector3.new(0, 0, 0),
+                        [2] = HRP,
+                        [3] = player.Character.HumanoidRootPart,
+                        [4] = Vector3.new(0, 0, 0)
+                    }
+                    game:GetService("ReplicatedStorage").Remotes.Shoot:FireServer(unpack(args))
+                end
+            end
+        end
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Auto Equip Gun < Beta >",
+    Default = false,
+    Callback = function(v)
+        _G.Autoequiptools = v
+        while _G.Autoequiptools do
+            task.wait(_G.AutoequiptoolsCD)
+            local player = game.Players.LocalPlayer
+            local backpack = player.Backpack
+            for _, item in pairs(backpack:GetChildren()) do
+                if item:IsA("Tool") then
+                    item.Parent = player.Character
+                end
+            end
+        end
+    end    
+})
+
+local realsize = {}
+
+Tab:AddToggle({
+    Name = "Hitbox Enabled",
+    Default = false,
+    Callback = function(v)
+        _G.HitboxEnabled = v
+    end    
+})
+
+Tab:AddTextbox({
+    Name = "Hitbox Size",
+    Default = "1.5",
+    TextDisappear = true,
+    Callback = function(v)
+        _G.sizehitbox = tonumber(v) or _G.sizehitbox
+    end	  
+})
+
+game:GetService('RunService').RenderStepped:Connect(function()
+    if _G.HitboxEnabled then
+        for _, player in pairs(game:GetService('Players'):GetPlayers()) do
+            if player.Name ~= game:GetService('Players').LocalPlayer.Name then
+                pcall(function()
+                    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        local HRP = player.Character.HumanoidRootPart
+                        if not realsize[player.Name] then
+                            realsize[player.Name] = HRP.Size
+                        end
+                        HRP.Size = Vector3.new(_G.sizehitbox, _G.sizehitbox, _G.sizehitbox)
+                        HRP.Transparency = _G.Transparency
+                        HRP.BrickColor = BrickColor.new(_G.ColorHitbox)
+                        HRP.Material = Enum.Material[_G.Material]
+                        HRP.CanCollide = _G.CanCollideHitbox
+                    end
+                end)
+            end
+        end
+    else
+        for playerName, ofcsize in pairs(realsize) do
+            local player = game:GetService('Players'):FindFirstChild(playerName)
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                pcall(function()
+                    player.Character.HumanoidRootPart.Size = ofcsize
+                    player.Character.HumanoidRootPart.Transparency = 0
+                end)
+            end
+        end
+    end
+end)
+
+local Tab = Window:MakeTab({
+    Name = "Extras",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+Tab:AddButton({
+    Name = "Esp",
+    Callback = function()
+        local Settings = {
+            Box_Color = Color3.fromRGB(_G.coloresp1, _G.coloresp2, _G.coloresp3),
+            Box_Thickness = _G.espthickness,
+            Team_Check = _G.Teamcheck,
+            Team_Color = _G.Teamcolor,
+            Autothickness = _G.Autothickness
+        }
+
+        local Space = game:GetService("Workspace")
+        local Player = game:GetService("Players").LocalPlayer
+        local Camera = Space.CurrentCamera
+
+        local function NewLine(color, thickness)
+            local line = Drawing.new("Line")
+            line.Visible = false
+            line.From = Vector2.new(0, 0)
+            line.To = Vector2.new(0, 0)
+            line.Color = color
+            line.Thickness = thickness
+            line.Transparency = 1
+            return line
+        end
+
+        local function Vis(lib, state)
+            for i, v in pairs(lib) do
+                v.Visible = state
+            end
+        end
+
+        local function Colorize(lib, color)
+            for i, v in pairs(lib) do
+                v.Color = color
+            end
+        end
+
+        local Black = Color3.fromRGB(0, 0, 0)
+
+        local function Rainbow(lib, delay)
+            for hue = 0, 1, 1/30 do
+                local color = Color3.fromHSV(hue, 0.6, 1)
+                Colorize(lib, color)
+                wait(delay)
+            end
+            Rainbow(lib)
+        end
+
+        local function Main(plr)
+            repeat wait() until plr.Character ~= nil and plr.Character:FindFirstChild("Humanoid") ~= nil
+            local R15
+            if plr.Character.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+                R15 = true
+            else 
+                R15 = false
+            end
+
+            local Library = {
+                TL1 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                TL2 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                TR1 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                TR2 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                BL1 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                BL2 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                BR1 = NewLine(Settings.Box_Color, Settings.Box_Thickness),
+                BR2 = NewLine(Settings.Box_Color, Settings.Box_Thickness)
+            }
+
+            coroutine.wrap(Rainbow)(Library, 0.15)
+            local oripart = Instance.new("Part")
+            oripart.Parent = Space
+            oripart.Transparency = 1
+            oripart.CanCollide = false
+            oripart.Size = Vector3.new(1, 1, 1)
+            oripart.Position = Vector3.new(0, 0, 0)
+
+            local function Updater()
+                local c 
+                c = game:GetService("RunService").RenderStepped:Connect(function()
+                    if plr.Character ~= nil and plr.Character:FindFirstChild("Humanoid") ~= nil and plr.Character:FindFirstChild("HumanoidRootPart") ~= nil and plr.Character.Humanoid.Health > 0 and plr.Character:FindFirstChild("Head") ~= nil then
+                        local Hum = plr.Character
+                        local HumPos, vis = Camera:WorldToViewportPoint(Hum.HumanoidRootPart.Position)
+                        if vis then
+                            oripart.Size = Vector3.new(Hum.HumanoidRootPart.Size.X, Hum.HumanoidRootPart.Size.Y*1.5, Hum.HumanoidRootPart.Size.Z)
+                            oripart.CFrame = CFrame.new(Hum.HumanoidRootPart.CFrame.Position, Camera.CFrame.Position)
+                            local SizeX = oripart.Size.X
+                            local SizeY = oripart.Size.Y
+                            local TL = Camera:WorldToViewportPoint((oripart.CFrame * CFrame.new(SizeX, SizeY, 0)).p)
+                            local TR = Camera:WorldToViewportPoint((oripart.CFrame * CFrame.new(-SizeX, SizeY, 0)).p)
+                            local BL = Camera:WorldToViewportPoint((oripart.CFrame * CFrame.new(SizeX, -SizeY, 0)).p)
+                            local BR = Camera:WorldToViewportPoint((oripart.CFrame * CFrame.new(-SizeX, -SizeY, 0)).p)
+
+                            Library.TL1.From = Vector2.new(TL.X, TL.Y)
+                            Library.TL1.To = Vector2.new(TR.X, TR.Y)
+
+                            Library.TL2.From = Vector2.new(BL.X, BL.Y)
+                            Library.TL2.To = Vector2.new(BR.X, BR.Y)
+
+                            Library.TR1.From = Vector2.new(TR.X, TR.Y)
+                            Library.TR1.To = Vector2.new(BR.X, BR.Y)
+
+                            Library.TR2.From = Vector2.new(TR.X, TR.Y)
+                            Library.TR2.To = Vector2.new(TR.X, TR.Y + 1)
+
+                            Library.BL1.From = Vector2.new(BL.X, BL.Y)
+                            Library.BL1.To = Vector2.new(BR.X, BR.Y)
+
+                            Library.BL2.From = Vector2.new(BL.X, BL.Y)
+                            Library.BL2.To = Vector2.new(BL.X, BL.Y - 1)
+
+                            Library.BR1.From = Vector2.new(BR.X, BR.Y)
+                            Library.BR1.To = Vector2.new(BR.X, BR.Y - 1)
+
+                            Library.BR2.From = Vector2.new(BR.X, BR.Y)
+                            Library.BR2.To = Vector2.new(BR.X + 1, BR.Y)
+
+                            Vis(Library, true)
+                        else
+                            Vis(Library, false)
+                        end
+                    else
+                        Vis(Library, false)
+                        c:Disconnect()
+                    end
+                end)
+            end
+
+            Updater()
+        end
+
+        for i, v in pairs(game:GetService("Players"):GetPlayers()) do
+            if v ~= Player then
+                Main(v)
+            end
+        end
+
+        game:GetService("Players").PlayerAdded:Connect(function(v)
+            Main(v)
+        end)
+    end
+})
+
+Tab:AddButton({
+    Name = "Rainbow Player (Visual)",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local function randomColor()
+            return Color3.new(math.random(0, 255) / 255, math.random(0, 255) / 255, math.random(0, 255) / 255)
+        end
+
+        local function lerpColor(startColor, endColor, alpha)
+            return startColor:Lerp(endColor, alpha)
+        end
+
+        local transitionTime = _G.transitionTime
+
+        while true do
+            local startTime = tick()
+            local endTime = startTime + transitionTime
+            
+            local startColor = randomColor()
+            local endColor = randomColor()
+            
+            while tick() < endTime do
+                local elapsedTime = tick() - startTime
+                local alpha = elapsedTime / transitionTime
+                
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.Color = lerpColor(startColor, endColor, alpha)
+                        part.Transparency = _G.TransparencyRGB
+                        part.Material = Enum.Material.ForceField
+                    end
+                end
+                
+                wait()
+            end
+        end
+    end    
+})
+
+OrionLib:Init()
