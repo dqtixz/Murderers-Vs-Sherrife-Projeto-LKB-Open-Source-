@@ -295,4 +295,14 @@ Tab:AddButton({
     end    
 })
 
+local Tab = Window:MakeTab({
+	Name = "Credits",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddLabel("https://scriptblox.com/u/NeymarJR")
+Tab:AddLabel(".gg/3kZ7dKbJPe")
+Tab:AddParagraph("Info","Projeto LKB Is Best Script games for AutoFarm, kill all, Advantage - Join For More Op Scripts")
+
 OrionLib:Init()
